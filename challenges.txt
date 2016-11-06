@@ -1,0 +1,26 @@
+TL;DR -
+1) CORS issues with the API response. Solution, proxy.
+
+2) Inconsistent data format returned from API. Solution for now, .slice(). In the future I will find a JS library or get a better understanding of Date objects
+
+3) Trying to include index value in variable names. Then I realized, why am I doing this, this is what object are for. So instead of time0, I used time[0].
+
+-------------------------------------------------------------------------------------------
+
+1) The first time I attempted this project, I ran into cross origin issues. To get past this issue I made the API call with PHP and passed the data to the front end by putting a PHP tag in a script tag.
+
+This time, I wanted to do it all in JS. Fortunately I now have a better understanding of response headers and CORS. The problem is, the translink API's response does not include the Access-Control-Allow-Origin header. A public API that can't be used cross-origin? That makes no sense at all!! How are you supposed to use it?
+
+I found the google group for the translink API, and I was not the only one having this problem. Someone there found a work around using YQL (yahoo query language). It can be used for many things, but I used it to proxy the API call. Then the Access-Control header is included by yahoos server. As an added bonus, yahoo serves the response over HTTPS, which solves a future problem for me. I want access to the users location in the future, to suggest nearby bus stops, but for that I need to serve the whole works over HTTPS.
+
+Hurray, glorious wonderful solution, and free too! How could it be any better? Well during testing, for which I usually use the same bus stop number, I noticed it was returning bus times for the previous night! Oh horror, yahoo must be caching the results. Back to the drawing board.
+
+Fortunately, I found a free service that proxies JSON api calls and adds the needed header. And it doesn't cache the results! This will do for the MVP, but it isnt https and it is a single point of failure that is dependent on some stranger keeping it up.
+
+I will make a self hosted proxy in the future, that adds the needed header and serves over HTTPS, but now is not the time for that. I always have to be weary of feature-creep taking me off track.
+
+2) ANother challenge was the inconsistency of the data returned from translink. Times are returned as a string, but sometimes they include the day-month-year too. It is seemingly random, it might return just ##:##PM/AM or it might send the whole date too. For now, im just using .slice(0,7) to trim it down if its too long. In the future, I will investigate a library for handling dates/times more gracefully or better yet the Date object.
+
+3) Some bus stops serve multiple routes. All my testing so far has been on bus stop numbers with only one route. My variable naming convention did not work now, because it is awkward to try and include the "i" value in a for loop in the variable names. Then i remembered, hey, thats what objects are for! Instead of leaveTime0, leaveTime1, I include them all in the leaveTime object.
+
+4) So now it handles multiple routes, but the code only makes sense to me. I need to extract complex functionality into named functions and commment the code.

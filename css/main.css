@@ -1,0 +1,10 @@
+.result {
+  width: 80%;
+  height: 500px;
+  background-color: lightBlue;
+  border-radius: 10px;
+}
+
+span {
+  text-transform: capitalize;
+}
